@@ -19,6 +19,8 @@ GroundBase::GroundBase(je::Level *level, const sf::Vector2f& pos, const sf::Vect
 	dirt.setPosition(pos);
 	dirtTex.setRepeated(true);
 	dirt.setTextureRect(sf::IntRect(0.f, 0.f, dim.x, dim.y));
+
+	setDepth(-10);
 }
 
 

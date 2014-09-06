@@ -1,6 +1,7 @@
 #include "World.hpp"
-#include "GroundBase.hpp"
 
+#include "Gnome.hpp"
+#include "GroundBase.hpp"
 #include "Tree.hpp"
 
 namespace or5
@@ -11,6 +12,7 @@ World::World(je::Game *game)
 {
 	addEntity(new GroundBase(this, sf::Vector2f(0, 400), sf::Vector2i(getWidth(), 80)));
 	addEntity(new Tree(this, sf::Vector2f(320, 400)));
+	addEntity(new Gnome(this, sf::Vector2f(100, 400)));
 
 	const sf::Color top(36, 60, 96);
 	const sf::Color bottom(57, 96, 153);
@@ -37,6 +39,5 @@ void World::beforeDraw(sf::RenderTarget& target) const
 {
 	target.draw(background, 5, sf::PrimitiveType::Quads);
 }
-
 
 } // or5
