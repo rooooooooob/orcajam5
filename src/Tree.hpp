@@ -6,16 +6,21 @@
 namespace or5
 {
 
+class GrowingLimb;
+
 class Tree : public je::Entity
 {
 public:
 	Tree(je::Level *level, const sf::Vector2f& pos);
 
+	void grow(float amount);
+
 private:
 	void onUpdate() override;
+
 	void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
 
-	int length;
+	GrowingLimb *trunk;
 };
 
 } // or5
