@@ -14,7 +14,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos)
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
 	,vertices(sf::PrimitiveType::Quads)
-	,length(33.f)
+	,length(3.f)
 	,angle(0.f)
 	,limbTransform()
 	,parent(nullptr)
@@ -30,6 +30,8 @@ void GrowingLimb::subdivide()
 	{
 		GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f));//getPos() + je::lengthdir(length, angle));
 		child->parent = this;
+		//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
+		child->limbTransform.setRotation(15.f - je::randomf(30.f) - 30.f + 60.f * i);
 		children.push_back(child);
 		level->addEntity(child);
 	}
@@ -72,7 +74,7 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
-	if (je::random(100) == 1)
+	if (children.empty() && length > 32.f)
 	{
 		subdivide();
 	}
@@ -88,10 +90,10 @@ void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states)
 void GrowingLimb::recalculateBounds()
 {
 	const std::initializer_list<sf::Vector2f> points = {
-		sf::Vector2f(-length / 3.f, 0.f),
-		sf::Vector2f(length / 3.f, 0.f),
-		sf::Vector2f(length / 4.f, length),
-		sf::Vector2f(-length / 4.f, length)
+		sf::Vector2f(0.f, -length / 3.f),
+		sf::Vector2f(0.f, length / 3.f),
+		sf::Vector2f(length, length / 4.f),
+		sf::Vector2f(length, -length / 4.f)
 	};
 
 	setMask(je::DetailedMask::MaskRef(new je::PolygonMask(points)));
