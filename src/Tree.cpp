@@ -14,7 +14,7 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 {
 	trunk = new GrowingLimb(level, pos);
 	level->addEntity(trunk);
-	trunk->transform().setRotation(180.f);
+	trunk->updateBoneTransform(sf::Vector2f(0.f, 0.f), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 180.f);
 }
 
 

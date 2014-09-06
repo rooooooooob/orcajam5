@@ -15,6 +15,9 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos)
 	,children()
 	,vertices(sf::PrimitiveType::Quads)
 	,length(33.f)
+	,angle(0.f)
+	,limbTransform()
+	,parent(nullptr)
 {
 	recalculateBounds();
 }
@@ -25,7 +28,8 @@ void GrowingLimb::subdivide()
 	const int n = 2;
 	for (int i = 0; i < 2; ++i)
 	{
-		GrowingLimb *child = new GrowingLimb(level, getPos() + je::lengthdir(length, angle));
+		GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f));//getPos() + je::lengthdir(length, angle));
+		child->parent = this;
 		children.push_back(child);
 		level->addEntity(child);
 	}
@@ -41,6 +45,30 @@ void GrowingLimb::grow(float amount)
 	}
 }
 
+void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::Vector2f origin, float angle)
+{
+	//	boneTransform() overrides anything done to the regular Enity transform
+	pos += limbTransform.getPosition();
+	if (parent)
+	{
+		pos += je::lengthdir(scale.x * parent->length, -angle);
+	}
+	scale.x *= limbTransform.getScale().x;
+	scale.y *= limbTransform.getScale().y;
+	origin += limbTransform.getOrigin();
+	angle += limbTransform.getRotation();
+
+	transform().setPosition(pos);
+	transform().setScale(scale);
+	transform().setOrigin(origin);
+	transform().setRotation(angle);
+
+	for (GrowingLimb *child : children)
+	{
+		child->updateBoneTransform(pos, scale, origin, angle);
+	}
+}
+
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
@@ -52,7 +80,9 @@ void GrowingLimb::onUpdate()
 
 void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
 {
-	target.draw(vertices, states.transform * this->transform().getTransform());
+	sf::RenderStates s = states;
+	s.transform *= transform().getTransform();
+	target.draw(vertices, s);
 }
 
 void GrowingLimb::recalculateBounds()

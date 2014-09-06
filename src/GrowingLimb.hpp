@@ -20,6 +20,8 @@ public:
 
 	void grow(float amount);
 
+	void updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::Vector2f origin, float angle);
+
 private:
 	void onUpdate() override;
 
