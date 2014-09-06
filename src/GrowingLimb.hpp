@@ -32,6 +32,8 @@ private:
 	sf::VertexArray vertices;
 	float length;
 	float angle;
+	sf::Transformable limbTransform;
+	GrowingLimb *parent;
 };
 
 } // or5

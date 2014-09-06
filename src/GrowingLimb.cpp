@@ -44,11 +44,15 @@ void GrowingLimb::grow(float amount)
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
+	if (je::random(100) == 1)
+	{
+		subdivide();
+	}
 }
 
 void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
 {
-	target.draw(vertices, states);
+	target.draw(vertices, states.transform * this->transform().getTransform());
 }
 
 void GrowingLimb::recalculateBounds()
@@ -65,7 +69,7 @@ void GrowingLimb::recalculateBounds()
 	vertices.clear();
 	for (const sf::Vector2f& point : points)
 	{
-		vertices.append(sf::Vertex(point + getPos(), sf::Color(158, 91, 24)));
+		vertices.append(sf::Vertex(point, sf::Color(158, 91, 24)));
 	}
 	vertices.append(vertices[0]);
 }
