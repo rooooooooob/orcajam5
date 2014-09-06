@@ -1,7 +1,7 @@
 #ifndef OR5_GROWINGLIMB_HPP
 #define OR5_GROWINGLIMB_HPP
 
-#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
 
 #include <vector>
 
@@ -32,7 +32,7 @@ private:
 
 
 	std::vector<GrowingLimb*> children;
-	sf::VertexArray vertices;
+	sf::ConvexShape vertices;
 	float length;
 	float angle;
 	sf::Transformable limbTransform;

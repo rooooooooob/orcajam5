@@ -6,7 +6,7 @@
 int main()
 {
 	je::Game game(640, 480, 60);
-	game.getTexManager().setPath("img/");
+	game.getTexManager().setPath("orcajam5/img/");
 
 	game.setLevel(new or5::World(&game));
 
