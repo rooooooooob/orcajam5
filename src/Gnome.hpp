@@ -21,12 +21,14 @@ private:
 
 	enum class State
 	{
-		Wander
+		Wander,
+		Building
 	};
 
 	enum class AnimKey
 	{
-		Running
+		Running,
+		Building
 	};
 
 	State state;

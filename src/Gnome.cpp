@@ -17,6 +17,7 @@ Gnome::Gnome(je::Level *level, const sf::Vector2f& pos)
 {
 	je::TexManager& texMan = level->getGame().getTexManager();
 	animations.insert(std::make_pair(AnimKey::Running, je::Animation(texMan.get("gnome_running.png"), 16, 16, 6)));
+	animations.insert(std::make_pair(AnimKey::Building, je::Animation(texMan.get("gnome_building.png"), 16, 16, 5)));
 
 	transform().setOrigin(8.f, 16.f);
 	transform().setPosition(pos);
@@ -55,6 +56,11 @@ void Gnome::onUpdate()
 			{
 				targetX = je::random(level->getWidth());
 			}
+		}
+		break;
+	case State::Building:
+		{
+
 		}
 		break;
 	}
