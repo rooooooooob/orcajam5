@@ -18,6 +18,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos)
 	,angle(0.f)
 	,limbTransform()
 	,parent(nullptr)
+	,lengthAtWhichSubdivide(32.f + je::random(64.f))
 {
 	recalculateBounds();
 }
@@ -25,7 +26,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos)
 
 void GrowingLimb::subdivide()
 {
-	const int n = je::choose({2, 2, 3});
+	const int n = je::choose({1, 2, 2, 3});
 
 	const int minBudget = 20;
 	std::vector<int> variances(n - 1, minBudget);
@@ -38,7 +39,7 @@ void GrowingLimb::subdivide()
 
 	float delta = je::randomf(30.f) - 15.f - totalVariance / 2.f;
 
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < n; ++i)
 	{
 		GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f));//getPos() + je::lengthdir(length, angle));
 		child->parent = this;
@@ -55,7 +56,8 @@ void GrowingLimb::subdivide()
 
 void GrowingLimb::grow(float amount)
 {
-	length += amount;
+	const float rate = 0.1 + 0.9 * ((lengthAtWhichSubdivide - length) / lengthAtWhichSubdivide);
+	length += amount * rate;
 	recalculateBounds();
 	for (GrowingLimb *child : children)
 	{
@@ -90,7 +92,7 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
-	if (children.empty() && length > 32.f)
+	if (children.empty() && length > lengthAtWhichSubdivide)
 	{
 		subdivide();
 	}
@@ -105,11 +107,13 @@ void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states)
 
 void GrowingLimb::recalculateBounds()
 {
+	const float upperThickness = length / 10.f + 1.f;
+	const float lowerThickness = length / 8.f + 2.f;
 	const std::initializer_list<sf::Vector2f> points = {
-		sf::Vector2f(0.f, -length / 3.f),
-		sf::Vector2f(0.f, length / 3.f),
-		sf::Vector2f(length, length / 4.f),
-		sf::Vector2f(length, -length / 4.f)
+		sf::Vector2f(0.f, -lowerThickness),
+		sf::Vector2f(0.f, lowerThickness), 
+		sf::Vector2f(length, upperThickness),
+		sf::Vector2f(length, -upperThickness)
 	};
 
 	setMask(je::DetailedMask::MaskRef(new je::PolygonMask(points)));

@@ -26,12 +26,12 @@ void Tree::grow(float amount)
 /*				private				*/
 void Tree::onUpdate()
 {
-	if (je::random(4) == 2) // 9 is a cool number
+	//if (je::random(4) == 2) // 9 is a cool number
 	{
-		grow(je::randomf(2.f));
+		grow(je::randomf(4.f));
 	}
 	static float d = 0;
-	d += je::randomf(0.1f);
+	d += je::randomf(0.01f);
 	trunk->updateBoneTransform(getPos(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), (sin(d) * 30.f / je::pi) - 90.f);
 }
 

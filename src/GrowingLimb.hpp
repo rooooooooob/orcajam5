@@ -36,6 +36,7 @@ private:
 	float angle;
 	sf::Transformable limbTransform;
 	GrowingLimb *parent;
+	const float lengthAtWhichSubdivide;
 };
 
 } // or5
