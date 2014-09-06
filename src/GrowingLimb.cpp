@@ -2,6 +2,7 @@
 
 #include <initializer_list>
 
+#include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Physics/PolygonMask.hpp"
 #include "jam-engine/Utility/Random.hpp"
@@ -13,13 +14,15 @@ namespace or5
 GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos)
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
-	,vertices(sf::PrimitiveType::Quads)
+	,vertices(4)
 	,length(3.f)
 	,angle(0.f)
 	,limbTransform()
 	,parent(nullptr)
 	,lengthAtWhichSubdivide(32.f + je::random(64.f))
 {
+	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
+
 	recalculateBounds();
 }
 
@@ -111,19 +114,18 @@ void GrowingLimb::recalculateBounds()
 	const float lowerThickness = length / 8.f + 2.f;
 	const std::initializer_list<sf::Vector2f> points = {
 		sf::Vector2f(0.f, -lowerThickness),
-		sf::Vector2f(0.f, lowerThickness), 
+		sf::Vector2f(0.f, lowerThickness),
 		sf::Vector2f(length, upperThickness),
 		sf::Vector2f(length, -upperThickness)
 	};
 
 	setMask(je::DetailedMask::MaskRef(new je::PolygonMask(points)));
 
-	vertices.clear();
+	unsigned int index = 0;
 	for (const sf::Vector2f& point : points)
 	{
-		vertices.append(sf::Vertex(point, sf::Color(158, 91, 24)));
+		vertices.setPoint(index++, point);
 	}
-	vertices.append(vertices[0]);
 }
 
 } // or5

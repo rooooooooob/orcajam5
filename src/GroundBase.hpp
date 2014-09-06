@@ -1,8 +1,9 @@
 #ifndef OR5_GROUNDBASE_HPP
 #define OR5_GROUNDBASE_HPP
 
-#include "jam-engine/Core/Entity.hpp"
 #include <SFML/Graphics/Sprite.hpp>
+
+#include "jam-engine/Core/Entity.hpp"
 
 namespace or5
 {
@@ -16,9 +17,10 @@ private:
 	void onUpdate() override;
 	void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
 
-	int length;
-
-	sf::Sprite	grass;
+	sf::Sprite grass;
+	sf::Texture grassTex;
+	sf::Sprite dirt;
+	sf::Texture dirtTex;
 };
 
 } // or5

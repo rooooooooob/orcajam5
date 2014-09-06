@@ -1,6 +1,8 @@
 #ifndef OR5_WORLD_HPP
 #define OR5_WORLD_HPP
 
+#include <SFML/Graphics/Vertex.hpp>
+
 #include "jam-engine/Core/Level.hpp"
 
 namespace or5
@@ -28,6 +30,7 @@ private:
 	//void transformTiles(const std::string& layerName, int tilesAcross, int tilesHigh, unsigned  **tiles) override;
 
 
+	sf::Vertex background[5];
 };
 
 } // or5
