@@ -10,17 +10,18 @@
 namespace or5
 {
 
+class Tree;
+
 class GrowingLimb : public je::Entity
 {
 public:
-	GrowingLimb(je::Level *level, const sf::Vector2f& pos);
-
-
-	void subdivide();
+	GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity);
 
 	void grow(float amount);
 
 	void updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::Vector2f origin, float angle);
+
+	sf::Transformable& getLimbTransform() { return limbTransform; }
 
 private:
 	void onUpdate() override;
@@ -35,8 +36,9 @@ private:
 	float length;
 	float angle;
 	sf::Transformable limbTransform;
+	int limbCapacity;
 	GrowingLimb *parent;
-	const float lengthAtWhichSubdivide;
+	Tree* tree;
 };
 
 } // or5

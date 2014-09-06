@@ -2,6 +2,7 @@
 #define OR5_TREE_HPP
 
 #include "jam-engine/Core/Entity.hpp"
+#include <random>
 
 namespace or5
 {
@@ -14,6 +15,7 @@ public:
 	Tree(je::Level *level, const sf::Vector2f& pos);
 
 	void grow(float amount);
+	GrowingLimb* subdivide();
 
 private:
 	void onUpdate() override;
@@ -21,6 +23,10 @@ private:
 	void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
 
 	GrowingLimb *trunk;
+
+	std::default_random_engine generator;
+	std::normal_distribution<float> distribution;
+	int branchCount;
 };
 
 } // or5

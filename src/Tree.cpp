@@ -12,8 +12,10 @@ namespace or5
 Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 	:je::Entity(level, "Tree", pos, sf::Vector2i(32, 32))
 	,trunk(nullptr)
+	,distribution(0,15)
+	,branchCount(1)
 {
-	trunk = new GrowingLimb(level, pos);
+	trunk = new GrowingLimb(level, pos, this, 3);
 	level->addEntity(trunk);
 }
 
@@ -21,6 +23,16 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 void Tree::grow(float amount)
 {
 	trunk->grow(amount);
+}
+
+GrowingLimb* Tree::subdivide()
+{
+	float delta = distribution(generator);// - totalVariance / 2.f;
+	GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f), this, 3);//getPos() + je::lengthdir(length, angle));
+	child->getLimbTransform().setRotation(delta);
+	level->addEntity(child);
+	branchCount++;
+	return child;
 }
 
 /*				private				*/
