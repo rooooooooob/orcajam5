@@ -25,13 +25,29 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos)
 
 void GrowingLimb::subdivide()
 {
-	const int n = 2;
+	const int n = je::choose({2, 2, 3});
+
+	const int minBudget = 20;
+	std::vector<int> variances(n - 1, minBudget);
+	int totalVariance = 0;
+	for (int& variance : variances)
+	{
+		variance += je::randomf(10.f);
+		totalVariance += variance;
+	}
+
+	float delta = je::randomf(30.f) - 15.f - totalVariance / 2.f;
+
 	for (int i = 0; i < 2; ++i)
 	{
 		GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f));//getPos() + je::lengthdir(length, angle));
 		child->parent = this;
 		//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
-		child->limbTransform.setRotation(15.f - je::randomf(30.f) - 30.f + 60.f * i);
+		child->limbTransform.setRotation(delta);
+		if (i < variances.size())
+		{
+			delta += variances[i];
+		}
 		children.push_back(child);
 		level->addEntity(child);
 	}
