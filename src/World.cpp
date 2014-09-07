@@ -13,14 +13,15 @@ namespace or5
 {
 
 World::World(je::Game *game)
-	:je::Level(game, 640, 480)
+	:je::Level(game, 1600, 900)
 	, light(this)
-	, screen(this, 100, 50, sf::Rect<int>(0, -240, 640, 480))
+	, screen(this, 100, 50, sf::Rect<int>(0, 0, 640, 480))
+	, groundHeight(128.f)
+	, groundLevel(getHeight() - groundHeight)
 {
-	addEntity(new GroundBase(this, sf::Vector2f(0, 400), sf::Vector2i(getWidth(), 80)));
-	addEntity(new Tree(this, sf::Vector2f(320, 400)));
-	addEntity(new Gnome(this, sf::Vector2f(100, 400)));
-	addEntity(new Building(this, sf::Vector2f(500, 400), Building::Type::BasicHouse));
+	addEntity(new GroundBase(this, sf::Vector2f(0.f, groundLevel), sf::Vector2i(getWidth(), groundHeight)));
+	addEntity(new Tree(this, sf::Vector2f(getWidth() / 2.f, groundLevel)));
+	addEntity(new Building(this, sf::Vector2f(getWidth() / 2.f - 128 + je::randomf(256), groundLevel), Building::Type::BasicHouse));
 	addEntity(&light);
 
 	const sf::Color top(36, 60, 96);
@@ -100,7 +101,7 @@ void World::onUpdate()
 							  maxBuildingX + 32 ?
 							  minBuildingX - 32 :
 		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
-		addEntity(new Building(this, sf::Vector2f(buildingX, 400.f), Building::Type::Bonfire));
+		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::Bonfire));
 	}
 	else if (buildingCount[Building::Type::Church] < 1 && gnomeCount >= 15)
 	{
@@ -109,7 +110,7 @@ void World::onUpdate()
 							  maxBuildingX + 64 ?
 							  minBuildingX - 64 :
 		                      je::choose({minBuildingX - 64, maxBuildingX + 64});
-		addEntity(new Building(this, sf::Vector2f(buildingX, 400.f), Building::Type::Church));
+		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::Church));
 	}
 	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 7)
 	{
@@ -118,7 +119,7 @@ void World::onUpdate()
 							  maxBuildingX + 32 ?
 							  minBuildingX - 32 :
 		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
-		addEntity(new Building(this, sf::Vector2f(buildingX, 400.f), Building::Type::BasicHouse));
+		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::BasicHouse));
 	}
 }
 

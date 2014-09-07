@@ -38,6 +38,9 @@ private:
 	sf::Vector2f	mouseClickPoint;
 	je::Camera		screen;
 	sf::Vector2f	screenCenter;
+
+	const float groundHeight;
+	const float groundLevel;
 };
 
 } // or5
