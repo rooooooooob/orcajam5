@@ -1,8 +1,12 @@
 #include "World.hpp"
 
+#include "jam-engine/Core/Game.hpp"
+#include "jam-engine/Utility/Random.hpp"
+
 #include "Building.hpp"
 #include "Gnome.hpp"
 #include "GroundBase.hpp"
+#include "LightningBolt.hpp"
 #include "Tree.hpp"
 
 namespace or5
@@ -27,6 +31,15 @@ World::World(je::Game *game)
 
 void World::onUpdate()
 {
+	const je::Input input = getGame().getInput();
+
+	if (input.isButtonPressed(sf::Mouse::Button::Left))
+	{
+		// why the hell do I have to multiply getWidth() by 2?!
+		const sf::Vector2f start(je::randomf(getWidth() * 2), 0.f);
+		const sf::Vector2f end = this->getCursorPos();
+		addEntity(new LightningBolt(this, start, end));
+	}
 }
 
 void World::onDraw(sf::RenderTarget& target) const
