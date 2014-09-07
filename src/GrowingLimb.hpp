@@ -2,6 +2,7 @@
 #define OR5_GROWINGLIMB_HPP
 
 #include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include <vector>
 
@@ -36,6 +37,8 @@ private:
 
 	void recalculateBounds();
 
+	void spawnLeaves(int count);
+
 
 	std::vector<GrowingLimb*> children;
 	sf::ConvexShape vertices;
@@ -49,6 +52,7 @@ private:
 	Tree* tree;
 	int chainDepth;
 	Fruit *fruit;
+	std::vector<sf::Sprite> leaves;
 };
 
 } // or5
