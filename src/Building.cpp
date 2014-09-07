@@ -47,7 +47,7 @@ void Building::onUpdate()
 		{
 		case Type::BasicHouse:
 			{
-				if (je::random(100) == 0)
+				if (je::random(10) == 0)
 				{
 					level->addEntity(new Gnome(level, getPos()));
 				}

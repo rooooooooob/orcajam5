@@ -1,7 +1,10 @@
 #include "LightningBolt.hpp"
 
+#include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
+
+#include "Blood.hpp"
 
 namespace or5
 {
@@ -20,6 +23,20 @@ LightningBolt::LightningBolt(je::Level *level, const sf::Vector2f& startPos, con
 
 void LightningBolt::onUpdate()
 {
+	std::vector<je::Entity*> poorLittleGnomes;
+	level->findCollisions(poorLittleGnomes, this, "Gnome");
+	for (je::Entity* poorLittleGnome : poorLittleGnomes)
+	{
+		const int n = 9 + je::random(5);
+		for (int i = 0; i < n; ++i)
+		{
+			const float bSpd = 2.f + je::randomf(3.f);
+			const float bDir = je::randomf(180.f);
+			level->addEntity(new Blood(level, poorLittleGnome->getPos() - sf::Vector2f(0.f, 8.f), je::lengthdir(bSpd, bDir)));
+		}
+		poorLittleGnome->destroy();
+	}
+
 	const float dir = je::direction(veloc);
 
 	if (getPos().y > 400.f)
