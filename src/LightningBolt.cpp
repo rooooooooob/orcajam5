@@ -24,7 +24,8 @@ LightningBolt::LightningBolt(je::Level *level, const sf::Vector2f& startPos, con
 void LightningBolt::onUpdate()
 {
 	// destroy if off screen
-	if (getPos().x < -16.f || getPos().x > level->getWidth() + 16.f || getPos().y < -16.f)
+	if (getPos().x < -16.f || getPos().x > level->getWidth() + 16.f
+	    || getPos().y < -16.f || getPos().y > level->getHeight() + 16.f)
 	{
 		destroy();
 	}
@@ -45,7 +46,7 @@ void LightningBolt::onUpdate()
 
 	const float dir = je::direction(veloc);
 
-	if (getPos().y > 400.f)
+	if (level->testCollision(this, "GroundBase"))
 	{
 		this->destroy();
 	}
@@ -61,20 +62,19 @@ void LightningBolt::onUpdate()
 		{
 			bolt.clear();
 
-			const sf::Color color(0, 170, 255, 169);
-
-			bolt.append(sf::Vertex(startPos, color));
+			bolt.append(sf::Vertex(startPos, sf::Color(0, 170, 255, 123 + je::randomf(69))));
 
 
 			for (int i = je::random(boltJumpDist); i < len; i += je::random(boltJumpDist))
 			{
+				const sf::Color color(je::randomf(64), 120 + je::randomf(50), 200 + je::randomf(55), 123 + je::randomf(69));
 				const sf::Vector2f pos = startPos // initial position
 									   + je::lengthdir(i, dir) // how far we've traveled so far
-									   + je::lengthdir(je::randomf(boltJumpVariance) * 2 - boltJumpVariance, dir + 90.f); // variance normal to the ray direction
+									   + je::lengthdir(je::randomf(boltJumpVariance * 2) - boltJumpVariance, dir + 90.f); // variance normal to the ray direction
 				bolt.append(sf::Vertex(pos, color));
 			}
 
-			bolt.append(sf::Vertex(getPos(), color));
+			bolt.append(sf::Vertex(getPos(), sf::Color(0, 170, 255, 123 + je::randomf(69))));
 		}
 	}
 }
