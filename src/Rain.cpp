@@ -8,7 +8,7 @@ namespace or5
 {
 
 const int RAIN_WIDTH = 128;
-const int RAIN_DURATION = 959;
+const int RAIN_DURATION = 360;
 
 Rain::Rain(je::Level *level, const sf::Vector2f& pos)
 	:je::Entity(level, "Rain", pos, sf::Vector2i(RAIN_WIDTH, level->getWidth()), sf::Vector2i(-RAIN_WIDTH / 2, 0))
@@ -27,6 +27,8 @@ Rain::Rain(je::Level *level, const sf::Vector2f& pos)
 			rain.append(sf::Vertex(sf::Vector2f(x - 2 + je::randomf(4.f), y + 9 + je::randomf(9.f) + yVariance), rainColor));
 		}
 	}
+
+	setDepth(-3);
 }
 
 void Rain::onUpdate()

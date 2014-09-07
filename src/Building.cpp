@@ -20,6 +20,10 @@ Building::Building(je::Level *level, const sf::Vector2f& pos, Type type)
 	transform().setOrigin(0.f, getSize(type).y);
 
 	setDepth(-1);
+	if (type == Type::Bonfire)
+	{
+		setDepth(-2);
+	}
 }
 
 
