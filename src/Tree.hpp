@@ -15,7 +15,10 @@ public:
 	Tree(je::Level *level, const sf::Vector2f& pos);
 
 	void grow(float amount);
+
 	GrowingLimb* subdivide(bool LastBranch);
+
+	void chop();
 
 private:
 	void onUpdate() override;
@@ -28,6 +31,8 @@ private:
 	std::normal_distribution<float> distribution;
 	int branchCount;
 	int freeBranches;
+	const int maxHp;
+	int hp;
 };
 
 } // or5
