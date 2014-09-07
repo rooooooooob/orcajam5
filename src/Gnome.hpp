@@ -37,7 +37,9 @@ private:
 	{
 		Nothing,
 		Hunger,
-		Chop
+		Chop,
+		Tree,
+		AntiTree
 	};
 
 	State state;

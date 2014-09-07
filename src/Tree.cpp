@@ -76,7 +76,7 @@ void Tree::onUpdate()
 	// rain growth
 	if (level->testCollision(this, "Rain") != nullptr)
 	{
-		grow(je::randomf(4.f));
+		grow(je::randomf(1.f));
 	}
 
 	// swaying in the "wind"

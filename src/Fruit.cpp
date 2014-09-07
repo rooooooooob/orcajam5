@@ -17,7 +17,7 @@ Fruit::Fruit(je::Level * level, const sf::Vector2f& pos)
 {
 	sprite.setOrigin(4.f, 4.f);
 
-	setDepth(-23);
+	setDepth(-9);
 }
 
 
