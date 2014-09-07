@@ -52,7 +52,7 @@ void Building::onUpdate()
 		{
 		case Type::BasicHouse:
 			{
-				if (je::random(100) == 0)
+				if (je::random(100) == 0 && level->testCollision(this, "Gnome") == nullptr)
 				{
 					level->addEntity(new Gnome(level, getPos()));
 				}
