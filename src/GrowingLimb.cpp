@@ -13,7 +13,7 @@
 
 #define MaxLength 150
 #define MinSubdivideLength 30
-#define TreeSize 2.f
+#define TreeSize 0.5f
 
 namespace or5
 {

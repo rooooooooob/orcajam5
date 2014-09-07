@@ -9,7 +9,7 @@ namespace or5
 {
 
 Fruit::Fruit(je::Level * level, const sf::Vector2f& pos)
-	:je::Entity(level, "Fruit", pos, je::DetailedMask::MaskRef(new je::CircleMask(4)))
+	:je::Entity(level, "Fruit", pos, je::DetailedMask::MaskRef(new je::CircleMask(2.5)))
 	,sprite(level->getGame().getTexManager().get("fruit.png"), 8, 8, 300, false)
 	,ripeness(0)
 	,state(State::OnTree)
@@ -41,19 +41,22 @@ void Fruit::onUpdate()
 	switch (state)
 	{
 	case State::OnTree:
-		if ((je::pointDistance(level->getCursorPos(), getPos()) < 100.f && level->getGame().getInput().isButtonPressed(sf::Mouse::Button::Left)) ||
+		if ((je::pointDistance(level->getCursorPos(), getPos()) < 10.f && level->getGame().getInput().isButtonPressed(sf::Mouse::Button::Left)) ||
 		     ripeness > 1500) // falls off due to being ripe
 		{
 			state = State::Falling;
 		}
 		break;
 	case State::Falling:
-		gravity += 0.2f;
-		transform().move(0.f, gravity);
 		if (level->testCollision(this, "GroundBase") != nullptr)
 		{
 			gravity = 0.f;
 			state = State::OnGround;
+		}
+		else
+		{
+			gravity += 0.2f;
+			transform().move(0.f, gravity);
 		}
 		break;
 	case State::OnGround:
