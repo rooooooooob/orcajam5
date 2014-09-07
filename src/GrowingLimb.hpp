@@ -15,7 +15,7 @@ class Tree;
 class GrowingLimb : public je::Entity
 {
 public:
-	GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity);
+	GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity, int parentDepth);
 
 	void grow(float amount);
 
@@ -23,7 +23,9 @@ public:
 
 	sf::Transformable& getLimbTransform() { return limbTransform; }
 
-	int getRemainingCapacity() { return limbCapacity - children.size(); }
+	int getChildCount() const { return children.size(); }
+
+	int getChainDepth() const { return chainDepth; }
 
 private:
 	void onUpdate() override;
@@ -37,10 +39,13 @@ private:
 	sf::ConvexShape vertices;
 	float length;
 	float angle;
+	float MaxLength;
+	float MinSubdivideLength;
 	sf::Transformable limbTransform;
 	int limbCapacity;
 	GrowingLimb *parent;
 	Tree* tree;
+	int chainDepth;
 };
 
 } // or5

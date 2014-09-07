@@ -15,7 +15,7 @@ public:
 	Tree(je::Level *level, const sf::Vector2f& pos);
 
 	void grow(float amount);
-	GrowingLimb* subdivide(bool LastBranch);
+	GrowingLimb* subdivide(const GrowingLimb* parent);
 
 private:
 	void onUpdate() override;

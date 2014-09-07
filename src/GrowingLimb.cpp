@@ -10,22 +10,22 @@
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
 
-#define MaxLength 150
-#define MinSubdivideLength 30
-
 namespace or5
 {
 
-GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity)
+GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity, int parentDepth)
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
 	,vertices(4)
 	,length(3.f)
 	,angle(0.f)
+	,MaxLength(200)
+	,MinSubdivideLength(MaxLength/4)
 	,limbTransform()
 	,parent(nullptr)
 	,tree(base)
 	,limbCapacity(capacity)
+	,chainDepth(++parentDepth)
 {
 	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
 
@@ -34,7 +34,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 
 void GrowingLimb::grow(float amount)
 {
-	if (length < MaxLength)
+	if (length < float(MaxLength)/chainDepth)
 	{
 		const float rate = 0.1 * (MaxLength - length)/(MaxLength);
 		length += amount * rate;
@@ -49,10 +49,9 @@ void GrowingLimb::grow(float amount)
 	int lengthPastSubdivide = length - MinSubdivideLength;
 	if (lengthPastSubdivide < 0) lengthPastSubdivide = 0;
 
-	int remaining = getRemainingCapacity();
-	if (remaining > 0 && je::randomf(1) < ((float)lengthPastSubdivide)/MaxLength)
+	if (limbCapacity > children.size() && je::randomf(length * 100) < length/(children.size() + 1))
 	{
-		GrowingLimb* child = tree->subdivide(remaining == 1);
+		GrowingLimb* child = tree->subdivide(this);
 
 		if (child)
 		{

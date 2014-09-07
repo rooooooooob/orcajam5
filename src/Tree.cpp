@@ -21,7 +21,7 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 	,freeBranches(1)
 {
 	int capacity = je::random(MaxBranchCapacity) + 1;
-	trunk = new GrowingLimb(level, pos, this, capacity);
+	trunk = new GrowingLimb(level, pos, this, capacity, 0);
 	level->addEntity(trunk);
 	freeBranches += capacity;
 }
@@ -32,9 +32,9 @@ void Tree::grow(float amount)
 	trunk->grow(amount);
 }
 
-GrowingLimb* Tree::subdivide(bool lastBranch)
+GrowingLimb* Tree::subdivide(const GrowingLimb* parent)
 {
-	if (lastBranch)
+	if (parent->getChildCount() == 1)
 		freeBranches--;
 
 	float delta = distribution(generator);// - totalVariance / 2.f;
@@ -42,11 +42,11 @@ GrowingLimb* Tree::subdivide(bool lastBranch)
 	int branchCapacity = je::random(MaxBranchCapacity) + 1; // 1 to MaxBranches branchess;
 	if (freeBranches > 1)
 	{
-		branchCapacity -= MaxBranchCapacity * (freeBranches/MaxBranches);
+		branchCapacity -= (MaxBranchCapacity * (freeBranches/MaxBranches)) ;
 		if (branchCapacity < 0) branchCapacity = 0;
 	}
 
-	GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f), this, branchCapacity);//getPos() + je::lengthdir(length, angle));
+	GrowingLimb *child = new GrowingLimb(level, sf::Vector2f(0.f, 0.f), this, branchCapacity, parent->getChainDepth());//getPos() + je::lengthdir(length, angle));
 	freeBranches += branchCapacity;
 	child->getLimbTransform().setRotation(delta);
 	level->addEntity(child);
@@ -71,7 +71,7 @@ void Tree::onUpdate()
 
 	// swaying in the "wind"
 	static float d = 0;
-	d += je::randomf(0.01f);
+	d += je::randomf(0.001f);
 	trunk->updateBoneTransform(getPos(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), (sin(d) * 30.f / je::pi) - 90.f);
 }
 

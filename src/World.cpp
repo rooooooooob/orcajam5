@@ -9,13 +9,13 @@
 #include "LightningBolt.hpp"
 #include "Rain.hpp"
 #include "Tree.hpp"
+#include "Light.hpp"
 
 namespace or5
 {
 
 World::World(je::Game *game)
 	:je::Level(game, 1600, 900)
-	, light(this)
 	, screen(this, 100, 50, sf::Rect<int>(0, 0, 640, 480))
 	, groundHeight(128.f)
 	, groundLevel(getHeight() - groundHeight)
@@ -23,7 +23,8 @@ World::World(je::Game *game)
 	addEntity(new GroundBase(this, sf::Vector2f(0.f, groundLevel), sf::Vector2i(getWidth(), groundHeight)));
 	addEntity(new Tree(this, sf::Vector2f(getWidth() / 2.f, groundLevel)));
 	addEntity(new Building(this, sf::Vector2f(getWidth() / 2.f - 128 + je::randomf(256), groundLevel), Building::Type::BasicHouse));
-	addEntity(&light);
+	light = new Light(this);
+	addEntity(light);
 
 	const sf::Color top(36, 60, 96);
 	const sf::Color bottom(57, 96, 153);
@@ -31,6 +32,8 @@ World::World(je::Game *game)
 	background[1] = sf::Vertex(sf::Vector2f(getWidth(), 0.f), top);
 	background[2] = sf::Vertex(sf::Vector2f(getWidth(), getHeight()), bottom);
 	background[3] = sf::Vertex(sf::Vector2f(0.f, getHeight()), bottom);
+
+	screen.snap(sf::Vector2f(getWidth()/2, getHeight()*(3.f/4)));
 }
 
 
@@ -67,7 +70,7 @@ void World::onUpdate()
 	else if (input.isButtonReleased(sf::Mouse::Button::Left))
 	{
 		if (input.isKeyHeld(sf::Keyboard::Key::A))
-			light.shine(getCursorPos() - mouseClickPoint);
+			light->shine(mouseClickPoint, getCursorPos());
 	}
 
 	if (input.isButtonPressed(sf::Mouse::Button::Right))

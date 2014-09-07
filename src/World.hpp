@@ -6,10 +6,11 @@
 #include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Core/Camera.hpp"
 
-#include "Light.hpp"
-
 namespace or5
 {
+
+class Light;
+
 
 class World : public je::Level
 {
@@ -34,7 +35,7 @@ private:
 
 
 	sf::Vertex		background[5];
-	Light			light;
+	Light*			light;
 	sf::Vector2f	mouseClickPoint;
 	je::Camera		screen;
 	sf::Vector2f	screenCenter;
