@@ -15,7 +15,7 @@ public:
 	Tree(je::Level *level, const sf::Vector2f& pos);
 
 	void grow(float amount);
-	GrowingLimb* subdivide();
+	GrowingLimb* subdivide(bool LastBranch);
 
 private:
 	void onUpdate() override;
@@ -27,6 +27,7 @@ private:
 	std::default_random_engine generator;
 	std::normal_distribution<float> distribution;
 	int branchCount;
+	int freeBranches;
 };
 
 } // or5

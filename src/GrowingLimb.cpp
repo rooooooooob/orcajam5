@@ -10,8 +10,8 @@
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
 
-#define MaxLength 80
-#define MinSubdivideLength 20
+#define MaxLength 150
+#define MinSubdivideLength 30
 
 namespace or5
 {
@@ -34,12 +34,32 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 
 void GrowingLimb::grow(float amount)
 {
-	const float rate = 0.1 + 0.9 * (1.f/length);
-	length += amount * rate;
+	if (length < MaxLength)
+	{
+		const float rate = 0.1 * (MaxLength - length)/(MaxLength);
+		length += amount * rate;
+	}
+
 	recalculateBounds();
 	for (GrowingLimb *child : children)
 	{
 		child->grow(amount);
+	}
+
+	int lengthPastSubdivide = length - MinSubdivideLength;
+	if (lengthPastSubdivide < 0) lengthPastSubdivide = 0;
+
+	int remaining = getRemainingCapacity();
+	if (remaining > 0 && je::randomf(1) < ((float)lengthPastSubdivide)/MaxLength)
+	{
+		GrowingLimb* child = tree->subdivide(remaining == 1);
+
+		if (child)
+		{
+			child->parent = this;
+			//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
+			children.push_back(child);
+		}
 	}
 }
 
@@ -70,20 +90,6 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
-	int lengthPastSubdivide = length - MinSubdivideLength;
-	if (lengthPastSubdivide < 0) lengthPastSubdivide = 0;
-
-	if (children.size() < limbCapacity && je::randomf(1) < ((float)lengthPastSubdivide)/MaxLength)
-	{
-		GrowingLimb* child = tree->subdivide();
-
-		if (child)
-		{
-			child->parent = this;
-			//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
-			children.push_back(child);
-		}
-	}
 }
 
 void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states) const

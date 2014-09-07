@@ -23,6 +23,8 @@ public:
 
 	sf::Transformable& getLimbTransform() { return limbTransform; }
 
+	int getRemainingCapacity() { return limbCapacity - children.size(); }
+
 private:
 	void onUpdate() override;
 
