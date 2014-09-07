@@ -12,7 +12,7 @@ namespace or5
 LightningBolt::LightningBolt(je::Level *level, const sf::Vector2f& startPos, const sf::Vector2f& targetPos)
 	:je::Entity(level, "LightningBolt", startPos, sf::Vector2i(16, 16), sf::Vector2i(-8, -8))
 	,startPos(startPos)
-	,veloc(je::lengthdir(12.f, je::pointDirection(startPos, targetPos)))
+	,veloc(je::lengthdir(23 + je::randomf(9.f), je::pointDirection(startPos, targetPos)))
 {
 	const int n = 4 + je::random(5);
 	for (int i = 0; i < n; ++i)
