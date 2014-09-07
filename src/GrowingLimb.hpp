@@ -30,6 +30,9 @@ public:
 
 	int getChainDepth() const { return chainDepth; }
 
+	static const float MaxLengthLimit;
+	static const float MinSubdivideLengthLimit;
+
 private:
 	void onUpdate() override;
 
@@ -41,6 +44,7 @@ private:
 
 
 	std::vector<GrowingLimb*> children;
+	int chainDepth;
 	sf::ConvexShape vertices;
 	float length;
 	float angle;
@@ -50,7 +54,6 @@ private:
 	int limbCapacity;
 	GrowingLimb *parent;
 	Tree* tree;
-	int chainDepth;
 	Fruit *fruit;
 	std::vector<sf::Sprite> leaves;
 };

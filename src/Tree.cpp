@@ -104,7 +104,11 @@ void Tree::onUpdate()
 	}
 
 	const float deathTilt = 90.f * (maxHp - hp) / maxHp;
-	const float treeAngle = (sin(d) * 30.f / je::pi) + 90.f + deathTilt;
+	float treeAngle = deathTilt;
+	if (hp != 0)
+	{
+		treeAngle += (sin(d) * 30.f / je::pi) + 90.f;
+	}
 	trunk->updateBoneTransform(getPos(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), -treeAngle);
 }
 

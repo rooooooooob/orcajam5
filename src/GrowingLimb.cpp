@@ -4,11 +4,11 @@
 #include <initializer_list>
 
 #include "jam-engine/Core/Game.hpp"
-#include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Physics/PolygonMask.hpp"
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
 
+#include "World.hpp"
 #include "Fruit.hpp"
 
 #define TreeSize 1.f
@@ -16,33 +16,38 @@
 namespace or5
 {
 
+// static upper limits
+const float GrowingLimb::MaxLengthLimit = 150;
+const float GrowingLimb::MinSubdivideLengthLimit = MaxLengthLimit/5;
+
 GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity, int parentDepth)
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
+	,chainDepth(++parentDepth)
 	,vertices(4)
 	,length(2.f)
 	,angle(0.f)
-	,MaxLength(200)
-	,MinSubdivideLength(MaxLength/4)
+	,MaxLength(GrowingLimb::MaxLengthLimit/chainDepth)
+	,MinSubdivideLength(GrowingLimb::MinSubdivideLengthLimit/chainDepth)
 	,limbTransform()
 	,parent(nullptr)
 	,tree(base)
 	,limbCapacity(capacity)
-	,chainDepth(++parentDepth)
 	,fruit(nullptr)
 {
 	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
 
 	recalculateBounds();
 
-	spawnLeaves(2 + je::random(3));
+	if (chainDepth >= 3)
+		spawnLeaves(2 + je::random(3));
 }
 
 void GrowingLimb::grow(float amount)
 {
-	if (length < float(MaxLength)/chainDepth)
+	if (length < MaxLength)
 	{
-		const float rate = 0.1 * (MaxLength - length)/(MaxLength);
+		const float rate = 0.2;// * (MaxLength - length)/(MaxLength);
 		length += amount * rate;
 	}
 
@@ -55,20 +60,24 @@ void GrowingLimb::grow(float amount)
 	int lengthPastSubdivide = length - MinSubdivideLength;
 	if (lengthPastSubdivide < 0) lengthPastSubdivide = 0;
 
-	if (limbCapacity > children.size() && je::randomf(length * 100) < length/(children.size() + 1))
+	if (limbCapacity > children.size() && length >= MinSubdivideLength/chainDepth && je::randomf(length * 100) < length/(children.size() + 1))
 	{
-		GrowingLimb* child = tree->subdivide(this);
-
-		if (child)
+		sf::Transformable trans = transform();
+		if ((trans.getPosition() + je::lengthdir(MaxLength, -trans.getRotation())).y < static_cast<World*>(level)->getGroundLevel())
 		{
-			child->parent = this;
-			//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
-			children.push_back(child);
-			leaves.clear();
-			if (fruit)
+			GrowingLimb* child = tree->subdivide(this);
+
+			if (child)
 			{
-				children.back()->fruit = fruit;
-				fruit = nullptr;
+				child->parent = this;
+				//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
+					children.push_back(child);
+				leaves.clear();
+				if (fruit)
+				{
+					children.back()->fruit = fruit;
+					fruit = nullptr;
+				}
 			}
 		}
 	}
@@ -114,7 +123,7 @@ void GrowingLimb::onUpdate()
 			fruit = nullptr;
 		}
 	}
-	else if (children.empty() && je::random(3000) == 0)
+	else if (children.empty() && !leaves.empty() && je::random(3000) == 0)
 	{
 		fruit = new Fruit(level, getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
 		level->addEntity(fruit);
