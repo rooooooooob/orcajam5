@@ -19,6 +19,7 @@ World::World(je::Game *game)
 	, screen(this, 100, 50, sf::Rect<int>(0, 0, 640, 480))
 	, groundHeight(128.f)
 	, groundLevel(getHeight() - groundHeight)
+	, currentlySelectedPower(Power::Rain)
 {
 	addEntity(new GroundBase(this, sf::Vector2f(0.f, groundLevel), sf::Vector2i(getWidth(), groundHeight)));
 	addEntity(new Tree(this, sf::Vector2f(getWidth() / 2.f, groundLevel)));
@@ -66,13 +67,25 @@ void World::onUpdate()
 		screenCenter.y += 10;
 	}
 
-	if (input.isButtonPressed(sf::Mouse::Button::Left))
+	if (input.isButtonPressed(sf::Mouse::Button::Right))
 	{
-		// why the hell do I have to multiply getWidth() by 2?!
-		const sf::Vector2f start(je::randomf(getWidth() * 2), 0.f);
-		mouseClickPoint = this->getCursorPos();
-		const sf::Vector2f end = mouseClickPoint;
-		addEntity(new LightningBolt(this, start, end));
+		switch (currentlySelectedPower)
+		{
+		case Power::Rain:
+			{
+				addEntity(new Rain(this, sf::Vector2f(getCursorPos().x, 0.f)));
+			}
+			break;
+		case Power::Lightning:
+			{
+				// why the hell do I have to multiply getWidth() by 2?!
+				const sf::Vector2f start(je::randomf(getWidth() * 2), 0.f);
+				mouseClickPoint = this->getCursorPos();
+				const sf::Vector2f end = mouseClickPoint;
+				addEntity(new LightningBolt(this, start, end));
+			}
+			break;
+		}
 	}
 	else if (input.isButtonReleased(sf::Mouse::Button::Left))
 	{
@@ -80,9 +93,27 @@ void World::onUpdate()
 			light->shine(mouseClickPoint, getCursorPos());
 	}
 
-	if (input.isButtonPressed(sf::Mouse::Button::Right))
+	if (input.isKeyPressed(sf::Keyboard::Key::Q))
 	{
-		addEntity(new Rain(this, sf::Vector2f(getCursorPos().x, 0.f)));
+		if (currentlySelectedPower == Power::Rain)
+		{
+			currentlySelectedPower = Power::Lightning;
+		}
+		else if (currentlySelectedPower == Power::Lightning)
+		{
+			currentlySelectedPower = Power::Rain;
+		}
+	}
+	if (input.isKeyPressed(sf::Keyboard::Key::E))
+	{
+		if (currentlySelectedPower == Power::Rain)
+		{
+			currentlySelectedPower = Power::Lightning;
+		}
+		else if (currentlySelectedPower == Power::Lightning)
+		{
+			currentlySelectedPower = Power::Rain;
+		}
 	}
 
 	screen.update(screenCenter);

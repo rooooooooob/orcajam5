@@ -44,6 +44,13 @@ private:
 
 	const float groundHeight;
 	const float groundLevel;
+
+	enum class Power
+	{
+		Rain,
+		Lightning
+	};
+	Power currentlySelectedPower;
 };
 
 } // or5
