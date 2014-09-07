@@ -18,8 +18,6 @@ Building::Building(je::Level *level, const sf::Vector2f& pos, Type type)
 	,constructionNeeded(getConstructionNeeded(type))
 {
 	transform().setOrigin(0.f, getSize(type).y);
-
-	setDepth(-1);
 }
 
 
@@ -52,7 +50,7 @@ void Building::onUpdate()
 		{
 		case Type::BasicHouse:
 			{
-				if (je::random(666) == 0)
+				if (je::random(100) == 0)
 				{
 					level->addEntity(new Gnome(level, getPos()));
 				}
@@ -73,8 +71,8 @@ void Building::onUpdate()
 void Building::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
 {
 	sf::Transform t;
-	const int y = (constructionNeeded - constructionDone) / (float) constructionNeeded * getSize(type).y;
-	t.translate(0, y);
+	const int y = (constructionNeeded - constructionDone) / constructionNeeded * getSize(type).y;
+	t.translate(0, -y);
 	sf::RenderStates s = states;
 	s.transform *= t;
 	s.transform *= transform().getTransform();

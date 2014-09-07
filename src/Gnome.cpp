@@ -30,7 +30,9 @@ Gnome::Gnome(je::Level *level, const sf::Vector2f& pos)
 	animations.insert(std::make_pair(AnimKey::Chopping, je::Animation(texMan.get("gnome_chopping.png"), 16, 16, 5)));
 
 	thoughtAnimations.insert(std::make_pair(Thought::Hunger, je::Animation(texMan.get("thinking_food.png"), 16, 16, {5, 10, 50})));
-	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_chop.png"), 16, 16, {5, 10, 5})));
+	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_chop.png"), 16, 16, {5, 10, 50})));
+	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_tree.png"), 16, 16, {5, 10, 50})));
+	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_anti_tree.png"), 16, 16, {5, 10, 50})));
 
 	for (auto& thoughtAnim : thoughtAnimations)
 	{
@@ -80,10 +82,21 @@ void Gnome::onUpdate()
 			}
 
 			// get angry if almost starved a lot
-			if (timesAlmostStarved > 0)
+			if (timesAlmostStarved > 1)
 			{
-				rage += 0.05f;
-				thought = Thought::Chop;
+				rage += 0.5f;
+				thought = Thought::AntiTree;
+			}
+			else
+			{
+				if (rage > -100.f)
+				{
+					rage -= 0.05f;
+				}
+				else
+				{
+					thought = Thought::Tree;
+				}
 			}
 
 			// hunger
@@ -127,12 +140,15 @@ void Gnome::onUpdate()
 		break;
 	case State::Rage:
 		{
+			thought = Thought::Chop;
 			Tree *tree = static_cast<Tree*>(level->testCollision(sf::Rect<int>(0, 0, level->getWidth(), level->getHeight()), "Tree"));
+
+			transform().setScale(tree->getPos().x < getPos().x ? -1.f : 1.f, 1.f);
+
 			if (tree->getPos().x > getPos().x + 32)
 			{
 				currentAnimation = AnimKey::Running;
 				transform().move(1.f, 0.f);
-				transform().setScale(1.f, 1.f);
 
 				animations.at(currentAnimation).advanceFrame();
 			}
@@ -140,11 +156,15 @@ void Gnome::onUpdate()
 			{
 				currentAnimation = AnimKey::Running;
 				transform().move(-1.f, 0.f);
-				transform().setScale(-1.f, 1.f);
+
+				animations.at(currentAnimation).advanceFrame();
 			}
 			else
 			{
 				currentAnimation = AnimKey::Chopping;
+
+				animations.at(currentAnimation).advanceFrame();
+
 				tree->chop();
 			}
 		}

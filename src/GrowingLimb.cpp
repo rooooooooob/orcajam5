@@ -122,7 +122,7 @@ void GrowingLimb::onUpdate()
 
 	for (sf::Sprite& leaf : leaves)
 	{
-		leaf.setPosition(je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
+		leaf.setPosition(je::lengthdir(transform().getScale().x * TreeSize * length, transform().getRotation()));
 	}
 }
 
