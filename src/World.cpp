@@ -15,7 +15,7 @@ namespace or5
 {
 
 World::World(je::Game *game)
-	:je::Level(game, 1600, 900)
+	:je::Level(game, 1280, 600)
 	, screen(this, 100, 50, sf::Rect<int>(0, 0, 640, 480))
 	, groundHeight(128.f)
 	, groundLevel(getHeight() - groundHeight)
