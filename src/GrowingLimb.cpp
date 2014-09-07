@@ -11,7 +11,7 @@
 #include "World.hpp"
 #include "Fruit.hpp"
 
-#define TreeSize 1
+#define TreeSize 1.f
 
 namespace or5
 {
@@ -35,6 +35,8 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
 
 	recalculateBounds();
+
+	spawnLeaves(2 + je::random(3));
 }
 
 void GrowingLimb::grow(float amount)
@@ -65,12 +67,14 @@ void GrowingLimb::grow(float amount)
 			{
 				child->parent = this;
 				//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
-				children.push_back(child);
+					children.push_back(child);
+				leaves.clear();
+				if (fruit)
+				{
+					children.back()->fruit = fruit;
+					fruit = nullptr;
+				}
 			}
-		}
-		else
-		{
-			int test = 5;
 		}
 	}
 }
@@ -115,10 +119,15 @@ void GrowingLimb::onUpdate()
 			fruit = nullptr;
 		}
 	}
-	else if (children.empty() && je::random(300) == 0)
+	else if (children.empty() && je::random(3000) == 0)
 	{
 		fruit = new Fruit(level, getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
 		level->addEntity(fruit);
+	}
+
+	for (sf::Sprite& leaf : leaves)
+	{
+		leaf.setPosition(je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
 	}
 }
 
@@ -127,6 +136,10 @@ void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states)
 	sf::RenderStates s = states;
 	s.transform *= transform().getTransform();
 	target.draw(vertices, s);
+	for (const sf::Sprite& leaf : leaves)
+	{
+		target.draw(leaf, s);
+	}
 }
 
 void GrowingLimb::recalculateBounds()
@@ -147,6 +160,17 @@ void GrowingLimb::recalculateBounds()
 	for (const sf::Vector2f& point : points)
 	{
 		vertices.setPoint(index++, point);
+	}
+}
+
+void GrowingLimb::spawnLeaves(int count)
+{
+	const sf::Texture& leafTexture = level->getGame().getTexManager().get("leaf.png");
+	for (int i = 0; i < count; ++i)
+	{
+		leaves.push_back(sf::Sprite(leafTexture));
+		leaves.back().setOrigin(0.f, 8.f);
+		leaves.back().setRotation(je::randomf(360.f));
 	}
 }
 
