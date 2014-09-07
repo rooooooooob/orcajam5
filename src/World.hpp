@@ -33,16 +33,11 @@ private:
 	//void transformTiles(const std::string& layerName, int tilesAcross, int tilesHigh, unsigned  **tiles) override;
 
 
-<<<<<<< HEAD
 	sf::Vertex		background[5];
 	Light			light;
 	sf::Vector2f	mouseClickPoint;
 	je::Camera		screen;
 	sf::Vector2f	screenCenter;
-=======
-
-	sf::Vertex background[5];
->>>>>>> e7137365ebab5d5231c7aa4826404d4dd2094d82
 };
 
 } // or5
