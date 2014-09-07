@@ -37,6 +37,13 @@ World::World(je::Game *game)
 }
 
 
+const je::Camera World::getCamera() const
+{
+	return screen;
+}
+
+/*				private				*/
+
 void World::onUpdate()
 {
 	screenCenter = screen.getPosition();

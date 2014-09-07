@@ -33,6 +33,7 @@ private:
 	int freeBranches;
 	const int maxHp;
 	int hp;
+	sf::Sprite gameOver;
 };
 
 } // or5

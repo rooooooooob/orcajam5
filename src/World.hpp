@@ -19,6 +19,7 @@ public:
 
 	float getGroundLevel() const { return groundLevel; }
 
+	const je::Camera getCamera() const;
 private:
 	void onUpdate() override;
 

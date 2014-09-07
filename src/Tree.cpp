@@ -1,10 +1,13 @@
 #include "Tree.hpp"
 
+#include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
 
 #include "GrowingLimb.hpp"
+#include "World.hpp"
+
 #include <cmath>
 
 #define MaxBranchCapacity	4
@@ -21,11 +24,14 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 	,freeBranches(1)
 	,maxHp(666)
 	,hp(maxHp)
+	,gameOver(level->getGame().getTexManager().get("game_over.png"))
 {
 	int capacity = je::random(MaxBranchCapacity) + 1;
 	trunk = new GrowingLimb(level, pos, this, capacity, 0);
 	level->addEntity(trunk);
 	freeBranches += capacity;
+
+	gameOver.setOrigin(200.f, 80.f);
 }
 
 
@@ -83,6 +89,20 @@ void Tree::onUpdate()
 	static float d = 0;
 	d += je::randomf(0.01f);
 
+	if (hp < 225 && hp > 0)
+	{
+		World *world = static_cast<World*>(level);
+		// todo fix this in engine later
+		const sf::FloatRect& screenRect = world->getCamera().getScreenRect();
+		gameOver.setPosition(screenRect.left + screenRect.width / 2, screenRect.top + screenRect.height / 2);
+		--hp;
+	}
+	// game over
+	if (hp <= 0)
+	{
+		level->getGame().setLevel(new World(&level->getGame()));
+	}
+
 	const float deathTilt = 90.f * (maxHp - hp) / maxHp;
 	float treeAngle = deathTilt;
 	if (hp != 0)
@@ -94,6 +114,10 @@ void Tree::onUpdate()
 
 void Tree::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
 {
+	if (hp < 225)
+	{
+		target.draw(gameOver, states);
+	}
 }
 
 } // or5
