@@ -31,6 +31,12 @@ private:
 		Building
 	};
 
+	enum class Thought
+	{
+		Nothing,
+		Hunger
+	};
+
 	State state;
 	AnimKey currentAnimation;
 	std::map<AnimKey, je::Animation> animations;
@@ -39,6 +45,11 @@ private:
 	int targetX;
 
 	int countdown;
+
+	Thought thought;
+	std::map<Thought, je::Animation> thoughtAnimations;
+
+	float hunger;
 };
 
 } // or5
