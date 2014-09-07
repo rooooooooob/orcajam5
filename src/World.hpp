@@ -18,6 +18,7 @@ public:
 	World(je::Game *game);
 
 
+	const je::Camera getCamera() const;
 private:
 	void onUpdate() override;
 
