@@ -65,6 +65,11 @@ void GrowingLimb::grow(float amount)
 			//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
 			children.push_back(child);
 			leaves.clear();
+			if (fruit)
+			{
+				children.back()->fruit = fruit;
+				fruit = nullptr;
+			}
 		}
 	}
 }
@@ -109,7 +114,7 @@ void GrowingLimb::onUpdate()
 			fruit = nullptr;
 		}
 	}
-	else if (children.empty() && je::random(300) == 0)
+	else if (children.empty() && je::random(3000) == 0)
 	{
 		fruit = new Fruit(level, getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
 		level->addEntity(fruit);
