@@ -7,6 +7,7 @@
 #include "Gnome.hpp"
 #include "GroundBase.hpp"
 #include "LightningBolt.hpp"
+#include "Rain.hpp"
 #include "Tree.hpp"
 
 namespace or5
@@ -67,6 +68,11 @@ void World::onUpdate()
 	{
 		if (input.isKeyHeld(sf::Keyboard::Key::A))
 			light.shine(getCursorPos() - mouseClickPoint);
+	}
+
+	if (input.isButtonPressed(sf::Mouse::Button::Right))
+	{
+		addEntity(new Rain(this, sf::Vector2f(getCursorPos().x, 0.f)));
 	}
 
 	screen.update(screenCenter);
