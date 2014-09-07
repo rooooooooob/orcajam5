@@ -12,6 +12,7 @@
 
 #define MaxLength 150
 #define MinSubdivideLength 30
+#define TreeSize 2.f
 
 namespace or5
 {
@@ -20,7 +21,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
 	,vertices(4)
-	,length(3.f)
+	,length(2.f)
 	,angle(0.f)
 	,limbTransform()
 	,parent(nullptr)
@@ -69,7 +70,7 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 	pos += limbTransform.getPosition();
 	if (parent)
 	{
-		pos += je::lengthdir(scale.x * parent->length, -angle);
+		pos += je::lengthdir(scale.x * TreeSize * parent->length, -angle);
 	}
 	scale.x *= limbTransform.getScale().x;
 	scale.y *= limbTransform.getScale().y;
@@ -103,13 +104,14 @@ void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states)
 
 void GrowingLimb::recalculateBounds()
 {
-	const float upperThickness = length / 10.f + 1.f;
-	const float lowerThickness = length / 8.f + 2.f;
+	const float treeLength = length * TreeSize;
+	const float upperThickness = treeLength / 10.f + 1.f;
+	const float lowerThickness = treeLength / 8.f + 2.f;
 	const std::initializer_list<sf::Vector2f> points = {
 		sf::Vector2f(0.f, -lowerThickness),
 		sf::Vector2f(0.f, lowerThickness),
-		sf::Vector2f(length, upperThickness),
-		sf::Vector2f(length, -upperThickness)
+		sf::Vector2f(treeLength, upperThickness),
+		sf::Vector2f(treeLength, -upperThickness)
 	};
 
 	setMask(je::DetailedMask::MaskRef(new je::PolygonMask(points)));
