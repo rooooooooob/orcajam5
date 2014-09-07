@@ -16,34 +16,38 @@
 namespace or5
 {
 
-const float GrowingLimb::MaxLength = 200;
-const float GrowingLimb::MinSubdivideLength = MaxLength/4;
+// static upper limits
+const float GrowingLimb::MaxLengthLimit = 150;
+const float GrowingLimb::MinSubdivideLengthLimit = MaxLengthLimit/5;
 
 GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity, int parentDepth)
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
+	,chainDepth(++parentDepth)
 	,vertices(4)
 	,length(2.f)
 	,angle(0.f)
+	,MaxLength(GrowingLimb::MaxLengthLimit/chainDepth)
+	,MinSubdivideLength(GrowingLimb::MinSubdivideLengthLimit/chainDepth)
 	,limbTransform()
 	,parent(nullptr)
 	,tree(base)
 	,limbCapacity(capacity)
-	,chainDepth(++parentDepth)
 	,fruit(nullptr)
 {
 	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
 
 	recalculateBounds();
 
-	spawnLeaves(2 + je::random(3));
+	if (chainDepth >= 3)
+		spawnLeaves(2 + je::random(3));
 }
 
 void GrowingLimb::grow(float amount)
 {
-	if (length < float(GrowingLimb::MaxLength)/chainDepth)
+	if (length < MaxLength)
 	{
-		const float rate = 0.1 * (GrowingLimb::MaxLength - length)/(GrowingLimb::MaxLength);
+		const float rate = 0.2;// * (MaxLength - length)/(MaxLength);
 		length += amount * rate;
 	}
 
@@ -53,13 +57,13 @@ void GrowingLimb::grow(float amount)
 		child->grow(amount);
 	}
 
-	int lengthPastSubdivide = length - GrowingLimb::MinSubdivideLength;
+	int lengthPastSubdivide = length - MinSubdivideLength;
 	if (lengthPastSubdivide < 0) lengthPastSubdivide = 0;
 
-	if (limbCapacity > children.size() && je::randomf(length * 100) < length/(children.size() + 1))
+	if (limbCapacity > children.size() && length >= MinSubdivideLength/chainDepth && je::randomf(length * 100) < length/(children.size() + 1))
 	{
 		sf::Transformable trans = transform();
-		if ((trans.getPosition() + je::lengthdir(GrowingLimb::MaxLength, -trans.getRotation())).y < static_cast<World*>(level)->getGroundLevel())
+		if ((trans.getPosition() + je::lengthdir(MaxLength, -trans.getRotation())).y < static_cast<World*>(level)->getGroundLevel())
 		{
 			GrowingLimb* child = tree->subdivide(this);
 
@@ -119,7 +123,7 @@ void GrowingLimb::onUpdate()
 			fruit = nullptr;
 		}
 	}
-	else if (children.empty() && je::random(3000) == 0)
+	else if (children.empty() && !leaves.empty() && je::random(3000) == 0)
 	{
 		fruit = new Fruit(level, getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
 		level->addEntity(fruit);
