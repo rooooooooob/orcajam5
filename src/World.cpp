@@ -95,15 +95,18 @@ void World::onUpdate()
 	{
 		const Building& building = *static_cast<const Building*>(entity);
 		++buildingCount[building.getBuildingType()];
-		const int minX = building.getPos().x - building.getMask().getWidth();
-		if (minX < minBuildingX)
+		if (building.getBuildingType() != Building::Type::Bonfire)
 		{
-			minBuildingX = minX;
-		}
-		const int maxX = building.getPos().x + building.getMask().getWidth();
-		if (maxX > maxBuildingX)
-		{
-			maxBuildingX = maxX;
+			const int minX = building.getPos().x - building.getMask().getWidth();
+			if (minX < minBuildingX)
+			{
+				minBuildingX = minX;
+			}
+			const int maxX = building.getPos().x + building.getMask().getWidth();
+			if (maxX > maxBuildingX)
+			{
+				maxBuildingX = maxX;
+			}
 		}
 
 	}
@@ -112,30 +115,41 @@ void World::onUpdate()
 
 	if (gnomeCount >= 3 && buildingCount[Building::Type::Bonfire] < gnomeCount / 11)
 	{
-		const int buildingX = minBuildingX - 32 < 0 ?
-		                      maxBuildingX + 32 :
-							  maxBuildingX + 32 ?
-							  minBuildingX - 32 :
-		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
-		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::Bonfire));
+		int count = 0;
+		int x;
+		bool bonfireHere = false;
+		do
+		{
+			x = je::random(getWidth());
+			++count;
+			Building *b = static_cast<Building*>(testCollision(sf::Rect<int>(x, groundLevel - 32, 32, 32), "Building"));
+			bonfireHere = b && b->getBuildingType() == Building::Type::Bonfire;
+		}
+		while (count < 32 && bonfireHere);
+		if (count < 32)
+		{
+			addEntity(new Building(this, sf::Vector2f(x, groundLevel), Building::Type::Bonfire));
+		}
 	}
 	else if (gnomeCount >= 15 && buildingCount[Building::Type::Church] < gnomeCount / 35)
 	{
-		const int buildingX = minBuildingX - 64 < 0 ?
-		                      maxBuildingX + 64 :
-							  maxBuildingX + 64 ?
-							  minBuildingX - 64 :
-		                      je::choose({minBuildingX - 64, maxBuildingX + 64});
-		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::Church));
-	}
-	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 9)
-	{
+		const int variance = je::random(4) - 2;
 		const int buildingX = minBuildingX - 32 < 0 ?
-		                      maxBuildingX + 32 :
-							  maxBuildingX + 32 ?
+		                      maxBuildingX + 32  :
+							  maxBuildingX > getWidth() + 32 ?
 							  minBuildingX - 32 :
 		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
-		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::BasicHouse));
+		addEntity(new Building(this, sf::Vector2f(buildingX + variance, groundLevel), Building::Type::Church));
+	}
+	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 3)
+	{
+		const int variance = je::random(4) - 2;
+		const int buildingX = minBuildingX < 0 ?
+		                      maxBuildingX :
+							  (maxBuildingX > getWidth() ?
+							  minBuildingX:
+		                      je::choose({minBuildingX, maxBuildingX}));
+		addEntity(new Building(this, sf::Vector2f(buildingX + variance, groundLevel), Building::Type::BasicHouse));
 	}
 }
 
