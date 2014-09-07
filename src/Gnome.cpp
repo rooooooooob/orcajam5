@@ -7,6 +7,8 @@
 #include "jam-engine/Utility/Trig.hpp"
 
 #include "Blood.hpp"
+#include "Fruit.hpp"
+#include "Tree.hpp"
 
 namespace or5
 {
@@ -19,12 +21,16 @@ Gnome::Gnome(je::Level *level, const sf::Vector2f& pos)
 	,countdown(-1)
 	,thought(Thought::Nothing)
 	,hunger(0)
+	,rage(0)
+	,timesAlmostStarved(0)
 {
 	je::TexManager& texMan = level->getGame().getTexManager();
 	animations.insert(std::make_pair(AnimKey::Running, je::Animation(texMan.get("gnome_running.png"), 16, 16, 6)));
 	animations.insert(std::make_pair(AnimKey::Building, je::Animation(texMan.get("gnome_building.png"), 16, 16, 5)));
+	animations.insert(std::make_pair(AnimKey::Chopping, je::Animation(texMan.get("gnome_chopping.png"), 16, 16, 5)));
 
 	thoughtAnimations.insert(std::make_pair(Thought::Hunger, je::Animation(texMan.get("thinking_food.png"), 16, 16, {5, 10, 50})));
+	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_chop.png"), 16, 16, {5, 10, 5})));
 
 	for (auto& thoughtAnim : thoughtAnimations)
 	{
@@ -45,7 +51,7 @@ void Gnome::onUpdate()
 		--countdown;
 	}
 
-	hunger += 0.1f;
+	hunger += 0.03f;
 
 	thought = Thought::Nothing;
 
@@ -73,9 +79,27 @@ void Gnome::onUpdate()
 				targetX = je::random(level->getWidth());
 			}
 
+			// get angry if almost starved a lot
+			if (timesAlmostStarved > 0)
+			{
+				rage += 0.05f;
+				thought = Thought::Chop;
+			}
+
+			// hunger
 			if (hunger > 50.f)
 			{
 				thought = Thought::Hunger;
+				Fruit *fruit = static_cast<Fruit*>(level->testCollision(this, "Fruit"));
+				if (fruit != nullptr)
+				{
+					if (hunger > 60.f)
+					{
+						++timesAlmostStarved;
+					}
+					fruit->destroy();
+					hunger -= 50.f;
+				}
 			}
 			if (hunger >= 100.f)
 			{
@@ -88,11 +112,41 @@ void Gnome::onUpdate()
 				}
 				destroy();
 			}
+
+			// GNOME RAGE
+			if (rage > 100.f)
+			{
+				state = State::Rage;
+			}
 		}
 		break;
 	case State::Building:
 		{
 
+		}
+		break;
+	case State::Rage:
+		{
+			Tree *tree = static_cast<Tree*>(level->testCollision(sf::Rect<int>(0, 0, level->getWidth(), level->getHeight()), "Tree"));
+			if (tree->getPos().x > getPos().x + 32)
+			{
+				currentAnimation = AnimKey::Running;
+				transform().move(1.f, 0.f);
+				transform().setScale(1.f, 1.f);
+
+				animations.at(currentAnimation).advanceFrame();
+			}
+			else if (tree->getPos().x < getPos().x - 32)
+			{
+				currentAnimation = AnimKey::Running;
+				transform().move(-1.f, 0.f);
+				transform().setScale(-1.f, 1.f);
+			}
+			else
+			{
+				currentAnimation = AnimKey::Chopping;
+				tree->chop();
+			}
 		}
 		break;
 	}

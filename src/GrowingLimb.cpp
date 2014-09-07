@@ -2,13 +2,16 @@
 #include "Tree.hpp"
 
 #include <initializer_list>
-#include <iostream>
 
 #include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Physics/PolygonMask.hpp"
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
+
+#include "Fruit.hpp"
+
+#define TreeSize 0.5f
 
 namespace or5
 {
@@ -17,7 +20,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
 	,children()
 	,vertices(4)
-	,length(3.f)
+	,length(2.f)
 	,angle(0.f)
 	,MaxLength(200)
 	,MinSubdivideLength(MaxLength/4)
@@ -26,6 +29,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 	,tree(base)
 	,limbCapacity(capacity)
 	,chainDepth(++parentDepth)
+	,fruit(nullptr)
 {
 	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
 
@@ -68,7 +72,7 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 	pos += limbTransform.getPosition();
 	if (parent)
 	{
-		pos += je::lengthdir(scale.x * parent->length, -angle);
+		pos += je::lengthdir(scale.x * TreeSize * parent->length, -angle);
 	}
 	scale.x *= limbTransform.getScale().x;
 	scale.y *= limbTransform.getScale().y;
@@ -91,6 +95,22 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
+	if (fruit)
+	{
+		if (!fruit->isDetached())
+		{
+			fruit->transform().setPosition(getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
+		}
+		else
+		{
+			fruit = nullptr;
+		}
+	}
+	else if (children.empty() && je::random(300) == 0)
+	{
+		fruit = new Fruit(level, getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
+		level->addEntity(fruit);
+	}
 }
 
 void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
@@ -102,13 +122,14 @@ void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states)
 
 void GrowingLimb::recalculateBounds()
 {
-	const float upperThickness = length / 10.f + 1.f;
-	const float lowerThickness = length / 8.f + 2.f;
+	const float treeLength = length * TreeSize;
+	const float upperThickness = treeLength / 10.f + 1.f;
+	const float lowerThickness = treeLength / 8.f + 2.f;
 	const std::initializer_list<sf::Vector2f> points = {
 		sf::Vector2f(0.f, -lowerThickness),
 		sf::Vector2f(0.f, lowerThickness),
-		sf::Vector2f(length, upperThickness),
-		sf::Vector2f(length, -upperThickness)
+		sf::Vector2f(treeLength, upperThickness),
+		sf::Vector2f(treeLength, -upperThickness)
 	};
 
 	setMask(je::DetailedMask::MaskRef(new je::PolygonMask(points)));

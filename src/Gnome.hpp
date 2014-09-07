@@ -22,19 +22,22 @@ private:
 	enum class State
 	{
 		Wander,
-		Building
+		Building,
+		Rage
 	};
 
 	enum class AnimKey
 	{
 		Running,
-		Building
+		Building,
+		Chopping
 	};
 
 	enum class Thought
 	{
 		Nothing,
-		Hunger
+		Hunger,
+		Chop
 	};
 
 	State state;
@@ -50,6 +53,8 @@ private:
 	std::map<Thought, je::Animation> thoughtAnimations;
 
 	float hunger;
+	float rage;
+	int timesAlmostStarved;
 };
 
 } // or5

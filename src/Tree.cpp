@@ -19,6 +19,8 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 	,distribution(0, 30)
 	,branchCount(1)
 	,freeBranches(1)
+	,maxHp(666)
+	,hp(maxHp)
 {
 	int capacity = je::random(MaxBranchCapacity) + 1;
 	trunk = new GrowingLimb(level, pos, this, capacity, 0);
@@ -54,6 +56,14 @@ GrowingLimb* Tree::subdivide(const GrowingLimb* parent)
 	return child;
 }
 
+void Tree::chop()
+{
+	if (hp > 0)
+	{
+		--hp;
+	}
+}
+
 /*				private				*/
 void Tree::onUpdate()
 {
@@ -71,8 +81,11 @@ void Tree::onUpdate()
 
 	// swaying in the "wind"
 	static float d = 0;
-	d += je::randomf(0.001f);
-	trunk->updateBoneTransform(getPos(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), (sin(d) * 30.f / je::pi) - 90.f);
+	d += je::randomf(0.01f);
+
+	const float deathTilt = 90.f * (maxHp - hp) / maxHp;
+	const float treeAngle = (sin(d) * 30.f / je::pi) + 90.f + deathTilt;
+	trunk->updateBoneTransform(getPos(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), -treeAngle);
 }
 
 void Tree::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
