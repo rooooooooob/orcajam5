@@ -2,13 +2,14 @@
 #include "Tree.hpp"
 
 #include <initializer_list>
-#include <iostream>
 
 #include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Physics/PolygonMask.hpp"
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
+
+#include "Fruit.hpp"
 
 #define MaxLength 150
 #define MinSubdivideLength 30
@@ -27,6 +28,7 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 	,parent(nullptr)
 	,tree(base)
 	,limbCapacity(capacity)
+	,fruit(nullptr)
 {
 	vertices.setTexture(&level->getGame().getTexManager().get("bark.png"));
 
@@ -93,6 +95,22 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 /*			private			*/
 void GrowingLimb::onUpdate()
 {
+	if (fruit)
+	{
+		if (!fruit->isDetached())
+		{
+			fruit->transform().setPosition(getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
+		}
+		else
+		{
+			fruit = nullptr;
+		}
+	}
+	else if (children.empty() && je::random(300) == 0)
+	{
+		fruit = new Fruit(level, getPos() + je::lengthdir(transform().getScale().x * TreeSize * length, -transform().getRotation()));
+		level->addEntity(fruit);
+	}
 }
 
 void GrowingLimb::draw(sf::RenderTarget& target, const sf::RenderStates& states) const

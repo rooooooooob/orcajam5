@@ -10,6 +10,8 @@
 namespace or5
 {
 
+class Fruit;
+
 class Tree;
 
 class GrowingLimb : public je::Entity
@@ -41,6 +43,7 @@ private:
 	int limbCapacity;
 	GrowingLimb *parent;
 	Tree* tree;
+	Fruit *fruit;
 };
 
 } // or5
