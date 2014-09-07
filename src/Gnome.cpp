@@ -31,8 +31,8 @@ Gnome::Gnome(je::Level *level, const sf::Vector2f& pos)
 
 	thoughtAnimations.insert(std::make_pair(Thought::Hunger, je::Animation(texMan.get("thinking_food.png"), 16, 16, {5, 10, 50})));
 	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_chop.png"), 16, 16, {5, 10, 50})));
-	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_tree.png"), 16, 16, {5, 10, 50})));
-	thoughtAnimations.insert(std::make_pair(Thought::Chop, je::Animation(texMan.get("thinking_anti_tree.png"), 16, 16, {5, 10, 50})));
+	thoughtAnimations.insert(std::make_pair(Thought::Tree, je::Animation(texMan.get("thinking_tree.png"), 16, 16, {5, 10, 50})));
+	thoughtAnimations.insert(std::make_pair(Thought::AntiTree, je::Animation(texMan.get("thinking_anti_tree.png"), 16, 16, {5, 10, 50})));
 
 	for (auto& thoughtAnim : thoughtAnimations)
 	{
