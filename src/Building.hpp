@@ -1,9 +1,8 @@
 #ifndef OR5_BUILDING_HPP
 #define OR5_BUILDING_HPP
 
-#include <SFML/Graphics/Sprite.hpp>
-
 #include "jam-engine/Core/Entity.hpp"
+#include "jam-engine/Graphics/Animation.hpp"
 
 namespace or5
 {
@@ -14,7 +13,8 @@ public:
 	enum class Type
 	{
 		BasicHouse,
-		Church
+		Church,
+		Bonfire
 	};
 
 	Building(je::Level *level, const sf::Vector2f& pos, Type type);
@@ -39,7 +39,7 @@ private:
 	static int getConstructionNeeded(Type type);
 
 
-	sf::Sprite sprite;
+	je::Animation sprite;
 	Type type;
 	int constructionDone;
 	const int constructionNeeded;
