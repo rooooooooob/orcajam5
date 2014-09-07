@@ -81,6 +81,8 @@ void GrowingLimb::updateBoneTransform(sf::Vector2f pos, sf::Vector2f scale, sf::
 	transform().setOrigin(origin);
 	transform().setRotation(angle);
 
+	updateMask();
+
 	for (GrowingLimb *child : children)
 	{
 		child->updateBoneTransform(pos, scale, origin, angle);

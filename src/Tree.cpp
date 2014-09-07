@@ -57,7 +57,7 @@ GrowingLimb* Tree::subdivide(bool lastBranch)
 /*				private				*/
 void Tree::onUpdate()
 {
-	if (je::random(4) == 1) // 9 is a cool number
+	//if (je::random(4) == 1) // 9 is a cool number
 	{
 		grow(je::randomf(4.f));
 	}
