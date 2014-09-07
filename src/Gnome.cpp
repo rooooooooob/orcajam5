@@ -103,7 +103,7 @@ void Gnome::onUpdate()
 			if (hunger > 50.f)
 			{
 				thought = Thought::Hunger;
-				Fruit *fruit = static_cast<Fruit*>(level->testCollision(this, "Fruit"));
+				je::Entity *fruit = level->testCollision(this, "Fruit");
 				if (fruit != nullptr)
 				{
 					if (hunger > 60.f)
