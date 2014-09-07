@@ -10,7 +10,7 @@ namespace or5
 {
 
 LightningBolt::LightningBolt(je::Level *level, const sf::Vector2f& startPos, const sf::Vector2f& targetPos)
-	:je::Entity(level, "LightningBolt", startPos, sf::Vector2i(8, 8), sf::Vector2i(4, 4))
+	:je::Entity(level, "LightningBolt", startPos, sf::Vector2i(16, 16), sf::Vector2i(-8, -8))
 	,startPos(startPos)
 	,veloc(je::lengthdir(12.f, je::pointDirection(startPos, targetPos)))
 {
@@ -23,6 +23,12 @@ LightningBolt::LightningBolt(je::Level *level, const sf::Vector2f& startPos, con
 
 void LightningBolt::onUpdate()
 {
+	// destroy if off screen
+	if (getPos().x < -16.f || getPos().x > level->getWidth() + 16.f || getPos().y < -16.f)
+	{
+		destroy();
+	}
+
 	std::vector<je::Entity*> poorLittleGnomes;
 	level->findCollisions(poorLittleGnomes, this, "Gnome");
 	for (je::Entity* poorLittleGnome : poorLittleGnomes)

@@ -40,6 +40,57 @@ void World::onUpdate()
 		const sf::Vector2f end = this->getCursorPos();
 		addEntity(new LightningBolt(this, start, end));
 	}
+
+	// check for if you achieved some things
+	int minBuildingX = getWidth();
+	int maxBuildingX = 0;
+	std::map<Building::Type, int> buildingCount;
+	for (const je::Entity *entity : entities["Building"])
+	{
+		const Building& building = *static_cast<const Building*>(entity);
+		++buildingCount[building.getBuildingType()];
+		const int minX = building.getPos().x - building.getMask().getWidth();
+		if (minX < minBuildingX)
+		{
+			minBuildingX = minX;
+		}
+		const int maxX = building.getPos().x + building.getMask().getWidth();
+		if (maxX > maxBuildingX)
+		{
+			maxBuildingX = maxX;
+		}
+
+	}
+
+	const int gnomeCount = entities["Gnome"].size();
+
+	if (buildingCount[Building::Type::Bonfire] < 1 && gnomeCount >= 3)
+	{
+		const int buildingX = minBuildingX - 32 < 0 ?
+		                      maxBuildingX + 32 :
+							  maxBuildingX + 32 ?
+							  minBuildingX - 32 :
+		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
+		addEntity(new Building(this, sf::Vector2f(buildingX, 400.f), Building::Type::Bonfire));
+	}
+	else if (buildingCount[Building::Type::Church] < 1 && gnomeCount >= 15)
+	{
+		const int buildingX = minBuildingX - 64 < 0 ?
+		                      maxBuildingX + 64 :
+							  maxBuildingX + 64 ?
+							  minBuildingX - 64 :
+		                      je::choose({minBuildingX - 64, maxBuildingX + 64});
+		addEntity(new Building(this, sf::Vector2f(buildingX, 400.f), Building::Type::Church));
+	}
+	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 7)
+	{
+		const int buildingX = minBuildingX - 32 < 0 ?
+		                      maxBuildingX + 32 :
+							  maxBuildingX + 32 ?
+							  minBuildingX - 32 :
+		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
+		addEntity(new Building(this, sf::Vector2f(buildingX, 400.f), Building::Type::BasicHouse));
+	}
 }
 
 void World::onDraw(sf::RenderTarget& target) const

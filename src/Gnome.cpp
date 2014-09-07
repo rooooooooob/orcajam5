@@ -22,7 +22,7 @@ Gnome::Gnome(je::Level *level, const sf::Vector2f& pos)
 	transform().setOrigin(8.f, 16.f);
 	transform().setPosition(pos);
 
-	setDepth(-1);
+	setDepth(-3);
 }
 
 /*				private				*/
