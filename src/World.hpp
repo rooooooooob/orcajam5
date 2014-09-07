@@ -4,6 +4,9 @@
 #include <SFML/Graphics/Vertex.hpp>
 
 #include "jam-engine/Core/Level.hpp"
+#include "jam-engine/Core/Camera.hpp"
+
+#include "Light.hpp"
 
 namespace or5
 {
@@ -30,7 +33,11 @@ private:
 	//void transformTiles(const std::string& layerName, int tilesAcross, int tilesHigh, unsigned  **tiles) override;
 
 
-	sf::Vertex background[5];
+	sf::Vertex		background[5];
+	Light			light;
+	sf::Vector2f	mouseClickPoint;
+	je::Camera		screen;
+	sf::Vector2f	screenCenter;
 };
 
 } // or5
