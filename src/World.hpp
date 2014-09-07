@@ -17,6 +17,7 @@ class World : public je::Level
 public:
 	World(je::Game *game);
 
+	float getGroundLevel() const { return groundLevel; }
 
 private:
 	void onUpdate() override;

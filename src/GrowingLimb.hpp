@@ -29,6 +29,9 @@ public:
 
 	int getChainDepth() const { return chainDepth; }
 
+	static const float MaxLength;
+	static const float MinSubdivideLength;
+
 private:
 	void onUpdate() override;
 
@@ -41,14 +44,13 @@ private:
 	sf::ConvexShape vertices;
 	float length;
 	float angle;
-	float MaxLength;
-	float MinSubdivideLength;
 	sf::Transformable limbTransform;
 	int limbCapacity;
 	GrowingLimb *parent;
 	Tree* tree;
 	int chainDepth;
 	Fruit *fruit;
+
 };
 
 } // or5

@@ -4,17 +4,20 @@
 #include <initializer_list>
 
 #include "jam-engine/Core/Game.hpp"
-#include "jam-engine/Core/Level.hpp"
 #include "jam-engine/Physics/PolygonMask.hpp"
 #include "jam-engine/Utility/Random.hpp"
 #include "jam-engine/Utility/Trig.hpp"
 
+#include "World.hpp"
 #include "Fruit.hpp"
 
-#define TreeSize 0.5f
+#define TreeSize 1
 
 namespace or5
 {
+
+const float GrowingLimb::MaxLength = 200;
+const float GrowingLimb::MinSubdivideLength = MaxLength/4;
 
 GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, int capacity, int parentDepth)
 	:je::Entity(level, "GrowingLimb", pos, sf::Vector2i(32, 32))
@@ -22,8 +25,6 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 	,vertices(4)
 	,length(2.f)
 	,angle(0.f)
-	,MaxLength(200)
-	,MinSubdivideLength(MaxLength/4)
 	,limbTransform()
 	,parent(nullptr)
 	,tree(base)
@@ -38,9 +39,9 @@ GrowingLimb::GrowingLimb(je::Level *level, const sf::Vector2f& pos, Tree* base, 
 
 void GrowingLimb::grow(float amount)
 {
-	if (length < float(MaxLength)/chainDepth)
+	if (length < float(GrowingLimb::MaxLength)/chainDepth)
 	{
-		const float rate = 0.1 * (MaxLength - length)/(MaxLength);
+		const float rate = 0.1 * (GrowingLimb::MaxLength - length)/(GrowingLimb::MaxLength);
 		length += amount * rate;
 	}
 
@@ -50,18 +51,26 @@ void GrowingLimb::grow(float amount)
 		child->grow(amount);
 	}
 
-	int lengthPastSubdivide = length - MinSubdivideLength;
+	int lengthPastSubdivide = length - GrowingLimb::MinSubdivideLength;
 	if (lengthPastSubdivide < 0) lengthPastSubdivide = 0;
 
 	if (limbCapacity > children.size() && je::randomf(length * 100) < length/(children.size() + 1))
 	{
-		GrowingLimb* child = tree->subdivide(this);
-
-		if (child)
+		sf::Transformable trans = transform();
+		if ((trans.getPosition() + je::lengthdir(GrowingLimb::MaxLength, -trans.getRotation())).y < static_cast<World*>(level)->getGroundLevel())
 		{
-			child->parent = this;
-			//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
-			children.push_back(child);
+			GrowingLimb* child = tree->subdivide(this);
+
+			if (child)
+			{
+				child->parent = this;
+				//child->updateBoneTransform(sf::Vector2f(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), 30.f - je::randomf(60.f));
+				children.push_back(child);
+			}
+		}
+		else
+		{
+			int test = 5;
 		}
 	}
 }
