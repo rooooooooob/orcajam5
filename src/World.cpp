@@ -100,7 +100,7 @@ void World::onUpdate()
 
 	const int gnomeCount = entities["Gnome"].size();
 
-	if (buildingCount[Building::Type::Bonfire] < 1 && gnomeCount >= 3)
+	if (gnomeCount >= 3 && buildingCount[Building::Type::Bonfire] < gnomeCount / 11)
 	{
 		const int buildingX = minBuildingX - 32 < 0 ?
 		                      maxBuildingX + 32 :
@@ -109,7 +109,7 @@ void World::onUpdate()
 		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
 		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::Bonfire));
 	}
-	else if (buildingCount[Building::Type::Church] < 1 && gnomeCount >= 15)
+	else if (gnomeCount >= 15 && buildingCount[Building::Type::Church] < gnomeCount / 35)
 	{
 		const int buildingX = minBuildingX - 64 < 0 ?
 		                      maxBuildingX + 64 :
@@ -118,7 +118,7 @@ void World::onUpdate()
 		                      je::choose({minBuildingX - 64, maxBuildingX + 64});
 		addEntity(new Building(this, sf::Vector2f(buildingX, groundLevel), Building::Type::Church));
 	}
-	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 7)
+	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 9)
 	{
 		const int buildingX = minBuildingX - 32 < 0 ?
 		                      maxBuildingX + 32 :
