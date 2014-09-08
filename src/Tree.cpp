@@ -78,16 +78,17 @@ const GrowingLimb* Tree::getTrunk() const
 /*				private				*/
 void Tree::onUpdate()
 {
+	const float growRate = level->getGame().getInput().isKeyHeld(sf::Keyboard::Key::G) ? 3.f : 1.f;
 	// natural growth
 	if (je::random(23) == 9) // 9 is a cool number
 	{
-		grow(je::randomf(9.f));
+		grow(je::randomf(9.f * growRate));
 	}
 
 	// rain growth
 	if (level->testCollision(this, "Rain") != nullptr)
 	{
-		grow(je::randomf(0.5f));
+		grow(je::randomf(0.5f * growRate));
 	}
 
 	// swaying in the "wind"

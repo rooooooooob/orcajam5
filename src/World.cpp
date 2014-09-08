@@ -118,6 +118,12 @@ void World::onUpdate()
 		}
 	}
 
+	// restart
+	if (input.isKeyPressed(sf::Keyboard::Key::R))
+	{
+		getGame().setLevel(new World(&getGame()));
+	}
+
 	screen.update(screenCenter);
 
 	// check for if you achieved some things
