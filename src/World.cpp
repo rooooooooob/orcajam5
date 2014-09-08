@@ -15,7 +15,7 @@ namespace or5
 {
 
 World::World(je::Game *game)
-	:je::Level(game, 1280, 600)
+	:je::Level(game, 1280, 700)
 	, screen(this, 100, 50, sf::Rect<int>(0, 0, 640, 480))
 	, groundHeight(128.f)
 	, groundLevel(getHeight() - groundHeight)
@@ -144,7 +144,7 @@ void World::onUpdate()
 
 	const int gnomeCount = entities["Gnome"].size();
 
-	if (gnomeCount >= 3 && buildingCount[Building::Type::Bonfire] < gnomeCount / 11)
+	if (gnomeCount >= 3 && buildingCount[Building::Type::Bonfire] < gnomeCount / 9)
 	{
 		int count = 0;
 		int x;
@@ -162,9 +162,9 @@ void World::onUpdate()
 			addEntity(new Building(this, sf::Vector2f(x, groundLevel), Building::Type::Bonfire));
 		}
 	}
-	else if (gnomeCount >= 15 && buildingCount[Building::Type::Church] < gnomeCount / 35)
+	else if (gnomeCount >= 15 && buildingCount[Building::Type::Church] < gnomeCount / 17)
 	{
-		const int variance = je::random(4) - 2;
+		const int variance = je::random(10) - 5;
 		const int buildingX = minBuildingX - 32 < 0 ?
 		                      maxBuildingX + 32  :
 							  maxBuildingX > getWidth() + 32 ?
@@ -172,9 +172,9 @@ void World::onUpdate()
 		                      je::choose({minBuildingX - 32, maxBuildingX + 32});
 		addEntity(new Building(this, sf::Vector2f(buildingX + variance, groundLevel), Building::Type::Church));
 	}
-	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 3)
+	else if (buildingCount[Building::Type::BasicHouse] < gnomeCount / 7)
 	{
-		const int variance = je::random(4) - 2;
+		const int variance = je::random(8) - 4;
 		const int buildingX = minBuildingX < 0 ?
 		                      maxBuildingX :
 							  (maxBuildingX > getWidth() ?

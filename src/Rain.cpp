@@ -7,7 +7,7 @@
 namespace or5
 {
 
-const int RAIN_WIDTH = 128;
+const int RAIN_WIDTH = 196;
 const int RAIN_DURATION = 360;
 
 Rain::Rain(je::Level *level, const sf::Vector2f& pos)

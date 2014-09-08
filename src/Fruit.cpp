@@ -44,7 +44,7 @@ void Fruit::onUpdate()
 	{
 	case State::OnTree:
 		if ((je::pointDistance(level->getCursorPos(), getPos()) < 10.f && level->getGame().getInput().isButtonPressed(sf::Mouse::Button::Left)) ||
-		     ripeness > 1500) // falls off due to being ripe
+		     ripeness > 2500) // falls off due to being ripe
 		{
 			state = State::Falling;
 		}

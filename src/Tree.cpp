@@ -22,7 +22,7 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 	,distribution(0, 30)
 	,branchCount(1)
 	,freeBranches(1)
-	,maxHp(666)
+	,maxHp(1337)
 	,hp(maxHp)
 	,gameOver(level->getGame().getTexManager().get("game_over.png"))
 {
@@ -74,7 +74,7 @@ void Tree::chop()
 void Tree::onUpdate()
 {
 	// natural growth
-	if (je::random(30) == 9) // 9 is a cool number
+	if (je::random(23) == 9) // 9 is a cool number
 	{
 		grow(je::randomf(9.f));
 	}
@@ -82,14 +82,14 @@ void Tree::onUpdate()
 	// rain growth
 	if (level->testCollision(this, "Rain") != nullptr)
 	{
-		grow(je::randomf(1.f));
+		grow(je::randomf(0.5f));
 	}
 
 	// swaying in the "wind"
 	static float d = 0;
 	d += je::randomf(0.01f);
 
-	if (hp < 225 && hp > 0)
+	if (hp < 666 && hp > 0)
 	{
 		World *world = static_cast<World*>(level);
 		// todo fix this in engine later
@@ -107,14 +107,14 @@ void Tree::onUpdate()
 	float treeAngle = deathTilt;
 	if (hp != 0)
 	{
-		treeAngle += (sin(d) * 30.f / je::pi) + 90.f;
+		treeAngle += (sin(d) * 34.f / je::pi) + 90.f;
 	}
 	trunk->updateBoneTransform(getPos(), sf::Vector2f(1.f, 1.f), sf::Vector2f(0.f, 0.f), -treeAngle);
 }
 
 void Tree::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
 {
-	if (hp < 225)
+	if (hp < 666)
 	{
 		target.draw(gameOver, states);
 	}

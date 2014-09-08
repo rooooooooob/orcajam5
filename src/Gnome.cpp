@@ -53,7 +53,11 @@ void Gnome::onUpdate()
 		--countdown;
 	}
 
-	hunger += 0.03f;
+	hunger += 0.05f;
+	if (level->getGame().getInput().isKeyHeld(sf::Keyboard::Key::Space))
+	{
+		hunger += 0.3f;
+	}
 
 	thought = Thought::Nothing;
 
