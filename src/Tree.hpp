@@ -20,6 +20,8 @@ public:
 
 	void chop();
 
+	const GrowingLimb* getTrunk() const;
+
 private:
 	void onUpdate() override;
 

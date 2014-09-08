@@ -6,6 +6,7 @@
 #include "Building.hpp"
 #include "Gnome.hpp"
 #include "GroundBase.hpp"
+#include "GrowingLimb.hpp"
 #include "LightningBolt.hpp"
 #include "Rain.hpp"
 #include "Tree.hpp"
@@ -15,15 +16,16 @@ namespace or5
 {
 
 World::World(je::Game *game)
-	:je::Level(game, 1280, 700)
+	:je::Level(game, 1280, 640)
 	, screen(this, 100, 50, sf::Rect<int>(0, 0, 640, 480))
 	, groundHeight(128.f)
 	, groundLevel(getHeight() - groundHeight)
 	, currentlySelectedPower(Power::Rain)
+	, tree(nullptr)
 {
 	addEntity(new GroundBase(this, sf::Vector2f(0.f, groundLevel), sf::Vector2i(getWidth(), groundHeight)));
-	addEntity(new Tree(this, sf::Vector2f(getWidth() / 2.f, groundLevel)));
-	addEntity(new Building(this, sf::Vector2f(getWidth() / 2.f - 128 + je::randomf(256), groundLevel), Building::Type::BasicHouse));
+	tree = new Tree(this, sf::Vector2f(getWidth() / 2.f, groundLevel));
+	addEntity(tree);
 	light = new Light(this);
 	addEntity(light);
 
@@ -139,7 +141,19 @@ void World::onUpdate()
 				maxBuildingX = maxX;
 			}
 		}
+	}
 
+	// spawn initial house
+	if (entities["Building"].empty())
+	{
+		if (tree->getTrunk()->getMask().getHeight() > 32)
+		{
+			addEntity(new Building(this, sf::Vector2f(getWidth() / 2.f - 128 + je::randomf(256), groundLevel), Building::Type::BasicHouse));
+		}
+		else
+		{
+			tree->grow(0.5f);
+		}
 	}
 
 	const int gnomeCount = entities["Gnome"].size();

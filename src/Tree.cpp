@@ -70,6 +70,11 @@ void Tree::chop()
 	}
 }
 
+const GrowingLimb* Tree::getTrunk() const
+{
+	return trunk;
+}
+
 /*				private				*/
 void Tree::onUpdate()
 {

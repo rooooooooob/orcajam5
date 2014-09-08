@@ -11,6 +11,8 @@ namespace or5
 
 class Light;
 
+class Tree;
+
 
 class World : public je::Level
 {
@@ -51,6 +53,9 @@ private:
 		Lightning
 	};
 	Power currentlySelectedPower;
+
+	int countdown;
+	Tree *tree;
 };
 
 } // or5
