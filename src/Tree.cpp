@@ -32,6 +32,8 @@ Tree::Tree(je::Level *level, const sf::Vector2f& pos)
 	freeBranches += capacity;
 
 	gameOver.setOrigin(200.f, 80.f);
+
+	setDepth(-999);
 }
 
 
